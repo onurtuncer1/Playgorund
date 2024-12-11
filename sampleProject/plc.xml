@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project name="MyPLCProject">
+    <!-- Variables Section -->
+    <Variables>
+        <Variable name="StartButton" type="BOOL" value="false"/>
+        <Variable name="StopButton" type="BOOL" value="false"/>
+        <Variable name="MotorRunning" type="BOOL" value="false"/>
+        <Variable name="Counter" type="INT" value="0"/>
+        <Variable name="Speed" type="INT" value="1500"/>
+    </Variables>
+
+    <!-- Mappings Section -->
+    <Mappings>
+        <Mapping source="StartButton" target="InputStart"/>
+        <Mapping source="StopButton" target="InputStop"/>
+        <Mapping source="MotorRunning" target="OutputMotor"/>
+        <Mapping source="Speed" target="SpeedControl"/>
+    </Mappings>
+
+    <!-- POUs Section -->
+    <POUs>
+        <POU name="MainLadder" type="LAD"/>
+        <POU name="SpeedControlLogic" type="ST"/>
+    </POUs>
+
+    <!-- Ladder Diagram Section -->
+    <LadderDiagrams>
+        <LadderDiagram name="MainLadder">
+            <Rung>
+                <Contact type="NC" variable="StopButton"/>
+                <Contact type="NO" variable="StartButton"/>
+                <Coil type="Output" variable="MotorRunning"/>
+            </Rung>
+            <Rung>
+                <Contact type="NO" variable="MotorRunning"/>
+                <Output type="Increment" variable="Counter"/>
+            </Rung>
+        </LadderDiagram>
+    </LadderDiagrams>
+
+    <!-- Structured Text Section -->
+    <StructuredTexts>
+        <StructuredText name="SpeedControlLogic">
+            <![CDATA[
+            VAR
+                TargetSpeed : INT := 0;
+            END_VAR
+
+            IF MotorRunning THEN
+                TargetSpeed := Speed;
+            ELSE
+                TargetSpeed := 0;
+            END_IF;
+            ]]>
+        </StructuredText>
+    </StructuredTexts>
+</Project>
